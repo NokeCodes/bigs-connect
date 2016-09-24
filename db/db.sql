@@ -185,6 +185,35 @@ WITH (
 )
 TABLESPACE pg_default;
 
+-- Table: public.big_littles
+
+-- DROP TABLE public.big_littles;
+
+CREATE TABLE public.big_littles
+(
+    id integer NOT NULL DEFAULT nextval('big_littles_id_seq'::regclass),
+    big integer NOT NULL,
+    little integer NOT NULL,
+    CONSTRAINT big_littles_pkey PRIMARY KEY (id),
+    CONSTRAINT big_littles_big_key UNIQUE (big),
+    CONSTRAINT big_littles_little_key UNIQUE (little),
+    CONSTRAINT big_littles_big_fkey FOREIGN KEY (big)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT big_littles_little_fkey FOREIGN KEY (little)
+        REFERENCES public.little (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.big_littles
+    OWNER to postgres;
+
 ALTER TABLE public.checkins
     OWNER to postgres;
 
