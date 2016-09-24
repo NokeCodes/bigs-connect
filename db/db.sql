@@ -196,14 +196,20 @@ CREATE FUNCTION public.check_checkin_checkout()
     LANGUAGE 'plpgsql'
     COST 100.0
 AS $BODY$
-
 DECLARE
   checkin_count integer;
   checkout_count integer;
+  association_count integer;
 BEGIN
+-- Make sure a big only checks out their associated little
+  SELECT COUNT(*) INTO association_count FROM big_littles WHERE big_littles.big = checkins.big AND big_littles.little = NEW.little;
+  IF association_count <> 1 THEN
+    RETURN NULL;
+  END IF;
+
+-- Make sure a big only checks in when they aren't checked in, and can't check out unless they're checked in
   SELECT COUNT(*) INTO checkin_count FROM checkins WHERE checkins.type = TRUE AND checkins.big = NEW.big AND checkins.little = NEW.little;
   SELECT COUNT(*) INTO checkout_count FROM checkins WHERE checkins.type = FALSE AND checkins.big = NEW.big AND checkins.little = NEW.little;
--- If we're attempting to checkout, we need an open checkin
   IF NEW.type = TRUE THEN
     IF checkin_count + 1 <> checkout_count THEN
       RETURN NULL;
@@ -220,6 +226,12 @@ $BODY$;
 
 ALTER FUNCTION public.check_checkin_checkout()
     OWNER TO postgres;
+
+COMMENT ON FUNCTION public.check_checkin_checkout()
+    IS 'Make sure a checkout follows all the necessary constraints
+* A big can only checkout their associated little
+* A big can only checkin when they aren''t already checked in
+* A big can only checkout when they''re checked in';
 
 
 -- Trigger: ensure_checkin_checkout_sanity
