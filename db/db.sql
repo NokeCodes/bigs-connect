@@ -72,9 +72,9 @@ ALTER SEQUENCE public.users_id_seq
 CREATE TABLE public.users
 (
     id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
-    name character varying(255) COLLATE "default".pg_catalog NOT NULL,
-    mail_address character varying(255) COLLATE "default".pg_catalog NOT NULL,
-    pass character varying(255) COLLATE "default".pg_catalog NOT NULL,
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    mail_address character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    pass character varying(255) COLLATE pg_catalog."default" NOT NULL,
     admin boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT users_mail_address_key UNIQUE (mail_address)
@@ -94,8 +94,8 @@ ALTER TABLE public.users
 CREATE TABLE public.points
 (
     id integer NOT NULL DEFAULT nextval('points_id_seq'::regclass),
-    "position" point NOT NULL,
-    comment text COLLATE "default".pg_catalog NOT NULL,
+    positon point NOT NULL,
+    comment text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT points_pkey PRIMARY KEY (id)
 )
 WITH (
@@ -113,7 +113,7 @@ ALTER TABLE public.points
 CREATE TABLE public.password_resets
 (
     id integer NOT NULL DEFAULT nextval('password_resets_id_seq'::regclass),
-    key character varying(255) COLLATE "default".pg_catalog NOT NULL,
+    key character varying(255) COLLATE pg_catalog."default" NOT NULL,
     "user" integer NOT NULL,
     mark timestamp without time zone NOT NULL,
     CONSTRAINT password_resets_pkey PRIMARY KEY (id),
