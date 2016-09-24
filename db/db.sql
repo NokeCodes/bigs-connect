@@ -35,16 +35,6 @@ CREATE SEQUENCE public.checkins_id_seq
 ALTER SEQUENCE public.checkins_id_seq
     OWNER TO postgres;
 
-CREATE SEQUENCE public.little_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-ALTER SEQUENCE public.little_id_seq
-    OWNER TO postgres;
-
 CREATE SEQUENCE public.password_resets_id_seq
     INCREMENT 1
     START 1
@@ -75,16 +65,6 @@ CREATE SEQUENCE public.users_id_seq
 ALTER SEQUENCE public.users_id_seq
     OWNER TO postgres;
 
-CREATE SEQUENCE public.big_littles_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-ALTER SEQUENCE public.big_littles_id_seq
-    OWNER TO postgres;
-
 -- Table: public.users
 
 -- DROP TABLE public.users;
@@ -105,24 +85,6 @@ WITH (
 TABLESPACE pg_default;
 
 ALTER TABLE public.users
-    OWNER to postgres;
-
--- Table: public.little
-
--- DROP TABLE public.little;
-
-CREATE TABLE public.little
-(
-    name character varying(255) COLLATE "default".pg_catalog NOT NULL,
-    id integer NOT NULL DEFAULT nextval('little_id_seq'::regclass),
-    CONSTRAINT little_pkey PRIMARY KEY (id)
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
-ALTER TABLE public.little
     OWNER to postgres;
 
 -- Table: public.points
@@ -177,52 +139,18 @@ CREATE TABLE public.checkins
     mark timestamp without time zone NOT NULL,
     type boolean NOT NULL,
     big integer NOT NULL,
-    little integer NOT NULL,
     id integer NOT NULL DEFAULT nextval('checkins_id_seq'::regclass),
     CONSTRAINT checkins_pkey PRIMARY KEY (id),
     CONSTRAINT checkins_id_key UNIQUE (id),
     CONSTRAINT checkins_big_fkey FOREIGN KEY (big)
         REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT checkins_little_fkey FOREIGN KEY (little)
-        REFERENCES public.little (id) MATCH SIMPLE
-        ON UPDATE CASCADE
         ON DELETE CASCADE
 )
 WITH (
     OIDS = FALSE
 )
 TABLESPACE pg_default;
-
--- Table: public.big_littles
-
--- DROP TABLE public.big_littles;
-
-CREATE TABLE public.big_littles
-(
-    id integer NOT NULL DEFAULT nextval('big_littles_id_seq'::regclass),
-    big integer NOT NULL,
-    little integer NOT NULL,
-    CONSTRAINT big_littles_pkey PRIMARY KEY (id),
-    CONSTRAINT big_littles_big_key UNIQUE (big),
-    CONSTRAINT big_littles_little_key UNIQUE (little),
-    CONSTRAINT big_littles_big_fkey FOREIGN KEY (big)
-        REFERENCES public.users (id) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    CONSTRAINT big_littles_little_fkey FOREIGN KEY (little)
-        REFERENCES public.little (id) MATCH SIMPLE
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
-ALTER TABLE public.big_littles
-    OWNER to postgres;
 
 ALTER TABLE public.checkins
     OWNER to postgres;
@@ -239,11 +167,9 @@ AS $BODY$
 DECLARE
   checkin_count integer;
   checkout_count integer;
-  association_count integer;
 BEGIN
--- Make sure a big only checks out their associated little
-  SELECT COUNT(*) INTO association_count FROM big_littles WHERE big_littles.big = checkins.big AND big_littles.little = NEW.little;
-  IF association_count <> 1 THEN
+-- Make sure we have some kind of location data
+  IF NEW.location_text IS NULL AND NEW.location_gps IS NULL THEN
     RETURN NULL;
   END IF;
 
@@ -283,3 +209,29 @@ CREATE TRIGGER ensure_checkin_checkout_sanity
     ON public.checkins
     FOR EACH ROW
     EXECUTE PROCEDURE check_checkin_checkout();
+
+GRANT EXECUTE ON FUNCTION public.check_checkin_checkout() TO bbbs;
+
+GRANT ALL ON SEQUENCE public.big_littles_id_seq TO bbbs;
+
+GRANT ALL ON SEQUENCE public.checkins_id_seq TO bbbs;
+
+GRANT ALL ON SEQUENCE public.little_id_seq TO bbbs;
+
+GRANT ALL ON SEQUENCE public.password_resets_id_seq TO bbbs;
+
+GRANT ALL ON SEQUENCE public.points_id_seq TO bbbs;
+
+GRANT ALL ON SEQUENCE public.users_id_seq TO bbbs;
+
+GRANT ALL ON TABLE public.big_littles TO bbbs;
+
+GRANT ALL ON TABLE public.checkins TO bbbs;
+
+GRANT ALL ON TABLE public.little TO bbbs;
+
+GRANT ALL ON TABLE public.password_resets TO bbbs;
+
+GRANT ALL ON TABLE public.points TO bbbs;
+
+GRANT ALL ON TABLE public.users TO bbbs;
