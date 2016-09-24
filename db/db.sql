@@ -85,6 +85,7 @@ CREATE TABLE public.users
     name character varying(255) COLLATE "default".pg_catalog NOT NULL,
     mail_address character varying(255) COLLATE "default".pg_catalog NOT NULL,
     pass character varying(255) COLLATE "default".pg_catalog NOT NULL,
+    admin boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT users_mail_address_key UNIQUE (mail_address)
 )
