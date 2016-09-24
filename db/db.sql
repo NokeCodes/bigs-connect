@@ -1,8 +1,8 @@
 -- Database: bbbs
 
--- DROP DATABASE bbbs;
+DROP DATABASE bbbs;
 
-CREATE DATABASE bbbs
+CREATE OR REPLACE DATABASE bbbs
     WITH 
     OWNER = postgres
     ENCODING = 'UTF8'
@@ -13,9 +13,9 @@ CREATE DATABASE bbbs
     
 -- SCHEMA: public
 
--- DROP SCHEMA public ;
+DROP SCHEMA public ;
 
-CREATE SCHEMA public
+CREATE OR REPLACE SCHEMA public
     AUTHORIZATION postgres;
 
 COMMENT ON SCHEMA public
@@ -25,7 +25,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
-CREATE SEQUENCE public.checkins_id_seq
+CREATE OR REPLACE SEQUENCE public.checkins_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -35,7 +35,7 @@ CREATE SEQUENCE public.checkins_id_seq
 ALTER SEQUENCE public.checkins_id_seq
     OWNER TO postgres;
 
-CREATE SEQUENCE public.password_resets_id_seq
+CREATE OR REPLACE SEQUENCE public.password_resets_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -45,7 +45,7 @@ CREATE SEQUENCE public.password_resets_id_seq
 ALTER SEQUENCE public.password_resets_id_seq
     OWNER TO postgres;
 
-CREATE SEQUENCE public.points_id_seq
+CREATE OR REPLACE SEQUENCE public.points_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -55,7 +55,7 @@ CREATE SEQUENCE public.points_id_seq
 ALTER SEQUENCE public.points_id_seq
     OWNER TO postgres;
 
-CREATE SEQUENCE public.users_id_seq
+CREATE OR REPLACE SEQUENCE public.users_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -67,14 +67,14 @@ ALTER SEQUENCE public.users_id_seq
 
 -- Table: public.users
 
--- DROP TABLE public.users;
+DROP TABLE public.users;
 
-CREATE TABLE public.users
+CREATE OR REPLACE TABLE public.users
 (
     id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
-    name character varying(255) COLLATE "default".pg_catalog NOT NULL,
-    mail_address character varying(255) COLLATE "default".pg_catalog NOT NULL,
-    pass character varying(255) COLLATE "default".pg_catalog NOT NULL,
+    name character varying(255) NOT NULL,
+    mail_address character varying(255) NOT NULL,
+    pass character varying(255) NOT NULL,
     admin boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT users_mail_address_key UNIQUE (mail_address)
@@ -89,13 +89,13 @@ ALTER TABLE public.users
 
 -- Table: public.points
 
--- DROP TABLE public.points;
+DROP TABLE public.points;
 
-CREATE TABLE public.points
+CREATE OR REPLACE TABLE public.points
 (
     id integer NOT NULL DEFAULT nextval('points_id_seq'::regclass),
-    "position" point NOT NULL,
-    comment text COLLATE "default".pg_catalog NOT NULL,
+    positon point NOT NULL,
+    comment text NOT NULL,
     CONSTRAINT points_pkey PRIMARY KEY (id)
 )
 WITH (
@@ -108,13 +108,13 @@ ALTER TABLE public.points
 
 -- Table: public.password_resets
 
--- DROP TABLE public.password_resets;
+DROP TABLE public.password_resets;
 
-CREATE TABLE public.password_resets
+CREATE OR REPLACE TABLE public.password_resets
 (
     id integer NOT NULL DEFAULT nextval('password_resets_id_seq'::regclass),
-    key character varying(255) COLLATE "default".pg_catalog NOT NULL,
-    "user" integer NOT NULL,
+    key character varying(255) NOT NULL,
+    usr integer NOT NULL,
     mark timestamp without time zone NOT NULL,
     CONSTRAINT password_resets_pkey PRIMARY KEY (id),
     CONSTRAINT password_resets_user_fkey FOREIGN KEY ("user")
@@ -132,9 +132,9 @@ ALTER TABLE public.password_resets
 
 -- Table: public.checkins
 
--- DROP TABLE public.checkins;
+DROP TABLE public.checkins;
 
-CREATE TABLE public.checkins
+CREATE OR REPLACE TABLE public.checkins
 (
     mark timestamp without time zone NOT NULL,
     type boolean NOT NULL,
@@ -157,9 +157,9 @@ ALTER TABLE public.checkins
 
 -- FUNCTION: public.check_checkin_checkout()
 
--- DROP FUNCTION public.check_checkin_checkout();
+DROP FUNCTION public.check_checkin_checkout();
 
-CREATE FUNCTION public.check_checkin_checkout()
+CREATE OR REPLACE FUNCTION public.check_checkin_checkout()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100.0
@@ -202,9 +202,9 @@ COMMENT ON FUNCTION public.check_checkin_checkout()
 
 -- Trigger: ensure_checkin_checkout_sanity
 
--- DROP TRIGGER ensure_checkin_checkout_sanity ON public.checkins;
+DROP TRIGGER ensure_checkin_checkout_sanity ON public.checkins;
 
-CREATE TRIGGER ensure_checkin_checkout_sanity
+CREATE OR REPLACE TRIGGER ensure_checkin_checkout_sanity
     BEFORE INSERT
     ON public.checkins
     FOR EACH ROW
