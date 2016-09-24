@@ -75,6 +75,16 @@ CREATE SEQUENCE public.users_id_seq
 ALTER SEQUENCE public.users_id_seq
     OWNER TO postgres;
 
+CREATE SEQUENCE public.big_littles_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.big_littles_id_seq
+    OWNER TO postgres;
+
 -- Table: public.users
 
 -- DROP TABLE public.users;
