@@ -1,0 +1,22 @@
+{
+    EOModelVersion = "2.1"; 
+    adaptorName = JDBC; 
+    connectionDictionary = {URL = "jdbc:postgresql:bbbswo"; password = bbbs; username = bbbs; }; 
+    entities = (
+        {className = "org.bbbs.component.Big"; name = Big; }, 
+        {className = "org.bbbs.component.CheckInOut"; name = CheckInOut; }
+    ); 
+    internalInfo = {"_deletedEntityNamesInObjectStore" = (User); }; 
+    userInfo = {
+        "_EntityModeler" = {
+            activeDatabaseConfigName = Default; 
+            databaseConfigs = {
+                Default = {
+                    adaptorName = JDBC; 
+                    connectionDictionary = {URL = "jdbc:postgresql:bbbswo"; password = bbbs; username = bbbs; }; 
+                    prototypeEntityName = EOJDBCPostgresqlPrototypes; 
+                }; 
+            }; 
+        }; 
+    }; 
+}

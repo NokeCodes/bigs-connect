@@ -1,0 +1,24 @@
+styles : IndexStyles {
+	
+}
+
+errorMsg : WOString {
+	value = errorMessage;
+	
+	style = "text-color: black"
+}
+
+emailField : WOTextField {
+	value = email;
+	class = "_input _input-1 js-emails"
+}
+
+passwordField : WOPasswordField {
+	value = pass;	
+	class = "_input _input-2 js-passwd"
+}
+
+loginButton : WOSubmitButton {
+	action = loginUser;
+	class = "_button"
+}

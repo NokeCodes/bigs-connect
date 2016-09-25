@@ -1,0 +1,27 @@
+{
+    attributes = (
+        {allowsNull = N; columnName = bigID; name = bigID; prototypeName = longText; }, 
+        {allowsNull = N; name = id; prototypeName = id; }, 
+        {columnName = isCheckout; name = isCheckout; prototypeName = boolean; }, 
+        {columnName = location; name = location; prototypeName = longText; }, 
+        {columnName = mark; name = mark; prototypeName = jodaDateTime; }
+    ); 
+    attributesUsedForLocking = (bigID, id, isCheckout, location, mark); 
+    className = "org.bbbs.component.CheckInOut"; 
+    classProperties = (big, isCheckout, location, mark); 
+    externalName = CheckInOut; 
+    fetchSpecificationDictionary = {}; 
+    internalInfo = {"_javaClientClassName" = CheckInOut; }; 
+    name = CheckInOut; 
+    primaryKeyAttributes = (id); 
+    relationships = (
+        {
+            destination = Big; 
+            isMandatory = Y; 
+            isToMany = N; 
+            joinSemantic = EOInnerJoin; 
+            joins = ({destinationAttribute = email; sourceAttribute = bigID; }); 
+            name = big; 
+        }
+    ); 
+}

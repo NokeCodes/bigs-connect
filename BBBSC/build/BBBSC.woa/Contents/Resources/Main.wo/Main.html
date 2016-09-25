@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <meta charset = "utf-8" />
+    <meta name = "viewport" content = "initial-scale=1.0" />
+    <title>Login</title>
+    <webobject name = "styles" />
+  </head>
+  <body class = "body page-index clearfix">
+    <p id = "header" class = "text text-1 js-p1">
+      <span>Big Brothers Big Sisters</span>
+    </p>
+    <wo:form method = "post">
+      <webobject name = "emailField" />
+      <webobject name = "passwordField" />
+      <webobject name = "loginButton">Login</webobject>
+    </wo:form>
+    <p class = "text text-2">
+      <wo:if condition = "errorMsg != null">
+        <span><webobject name = "errorMsg" /> </span>
+      </wo:if>
+      <span>South Western Virginia Chapter</span>
+    </p>
+  </body>
+</html>

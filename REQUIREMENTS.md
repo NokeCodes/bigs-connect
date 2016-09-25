@@ -1,5 +1,4 @@
-PROJECT REQUIREMENTS
-====================
+# Project Requirements
 
 * Login with email/password
 * Check-in/Check-out: Need who, where, when

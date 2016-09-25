@@ -1,0 +1,25 @@
+{
+    attributes = (
+        {allowsNull = N; columnName = email; name = email; prototypeName = longText; }, 
+        {columnName = name; name = name; prototypeName = longText; }, 
+        {columnName = passwd; name = passwd; prototypeName = longText; }, 
+        {columnName = status; name = status; prototypeName = boolean; }
+    ); 
+    attributesUsedForLocking = (email, name, passwd, status); 
+    className = "org.bbbs.component.Big"; 
+    classProperties = (checkInOuts, name, passwd, status); 
+    externalName = Big; 
+    fetchSpecificationDictionary = {}; 
+    internalInfo = {"_javaClientClassName" = Big; }; 
+    name = Big; 
+    primaryKeyAttributes = (email); 
+    relationships = (
+        {
+            destination = CheckInOut; 
+            isToMany = Y; 
+            joinSemantic = EOInnerJoin; 
+            joins = ({destinationAttribute = bigID; sourceAttribute = email; }); 
+            name = checkInOuts; 
+        }
+    ); 
+}

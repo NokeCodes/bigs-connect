@@ -1,0 +1,22 @@
+styles : CheckInOutStyles {
+	
+}
+
+statusMsg : WOString {
+	value = status
+}
+
+location : WOTextField {
+	value = location;
+	class = "location_field"
+}
+
+checkIn : WOSubmitButton {
+	action = doCheckIn;
+	value = "Check In"
+}
+
+checkOut : WOSubmitButton {
+	action = doCheckOut;
+	value = "Check Out"
+}

@@ -1,81 +1,16 @@
--- Database: bbbs
+-- :mode=pl-sql:
 
-DROP DATABASE bbbs;
+CREATE TYPE privileges AS ENUM (
+  'regular', 'admin'
+);
 
-CREATE OR REPLACE DATABASE bbbs
-    WITH 
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'C'
-    LC_CTYPE = 'C'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
-    
--- SCHEMA: public
-
-DROP SCHEMA public ;
-
-CREATE OR REPLACE SCHEMA public
-    AUTHORIZATION postgres;
-
-COMMENT ON SCHEMA public
-    IS 'standard public schema';
-
-GRANT ALL ON SCHEMA public TO postgres;
-
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-CREATE OR REPLACE SEQUENCE public.checkins_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-ALTER SEQUENCE public.checkins_id_seq
-    OWNER TO postgres;
-
-CREATE OR REPLACE SEQUENCE public.password_resets_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-ALTER SEQUENCE public.password_resets_id_seq
-    OWNER TO postgres;
-
-CREATE OR REPLACE SEQUENCE public.points_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-ALTER SEQUENCE public.points_id_seq
-    OWNER TO postgres;
-
-CREATE OR REPLACE SEQUENCE public.users_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
-ALTER SEQUENCE public.users_id_seq
-    OWNER TO postgres;
-
--- Table: public.users
-
-DROP TABLE public.users;
-
-CREATE OR REPLACE TABLE public.users
+CREATE TABLE users
 (
-    id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
+    id SERIAL,
     name character varying(255) NOT NULL,
     mail_address character varying(255) NOT NULL,
     pass character varying(255) NOT NULL,
-    admin boolean NOT NULL DEFAULT FALSE,
+    admin privileges NOT NULL DEFAULT FALSE,
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT users_mail_address_key UNIQUE (mail_address)
 )
@@ -84,16 +19,12 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.users
+ALTER TABLE users
     OWNER to postgres;
 
--- Table: public.points
-
-DROP TABLE public.points;
-
-CREATE OR REPLACE TABLE public.points
+CREATE TABLE points
 (
-    id integer NOT NULL DEFAULT nextval('points_id_seq'::regclass),
+    id SERIAL,
     positon point NOT NULL,
     comment text NOT NULL,
     CONSTRAINT points_pkey PRIMARY KEY (id)
@@ -103,22 +34,18 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.points
+ALTER TABLE points
     OWNER to postgres;
 
--- Table: public.password_resets
-
-DROP TABLE public.password_resets;
-
-CREATE OR REPLACE TABLE public.password_resets
+CREATE TABLE password_resets
 (
-    id integer NOT NULL DEFAULT nextval('password_resets_id_seq'::regclass),
+    id SERIAL,
     key character varying(255) NOT NULL,
     usr integer NOT NULL,
     mark timestamp without time zone NOT NULL,
     CONSTRAINT password_resets_pkey PRIMARY KEY (id),
-    CONSTRAINT password_resets_user_fkey FOREIGN KEY ("user")
-        REFERENCES public.users (id) MATCH SIMPLE
+    CONSTRAINT password_resets_user_fkey FOREIGN KEY ("usr")
+        REFERENCES users (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE
 )
@@ -127,23 +54,19 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.password_resets
+ALTER TABLE password_resets
     OWNER to postgres;
 
--- Table: public.checkins
-
-DROP TABLE public.checkins;
-
-CREATE OR REPLACE TABLE public.checkins
+CREATE TABLE checkins
 (
     mark timestamp without time zone NOT NULL,
     type boolean NOT NULL,
     big integer NOT NULL,
-    id integer NOT NULL DEFAULT nextval('checkins_id_seq'::regclass),
+    id SERIAL,
     CONSTRAINT checkins_pkey PRIMARY KEY (id),
     CONSTRAINT checkins_id_key UNIQUE (id),
     CONSTRAINT checkins_big_fkey FOREIGN KEY (big)
-        REFERENCES public.users (id) MATCH SIMPLE
+        REFERENCES users (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE
 )
@@ -152,14 +75,10 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.checkins
+ALTER TABLE checkins
     OWNER to postgres;
 
--- FUNCTION: public.check_checkin_checkout()
-
-DROP FUNCTION public.check_checkin_checkout();
-
-CREATE OR REPLACE FUNCTION public.check_checkin_checkout()
+CREATE FUNCTION check_checkin_checkout()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100.0
@@ -190,48 +109,36 @@ END;
 
 $BODY$;
 
-ALTER FUNCTION public.check_checkin_checkout()
+ALTER FUNCTION check_checkin_checkout()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public.check_checkin_checkout()
+COMMENT ON FUNCTION check_checkin_checkout()
     IS 'Make sure a checkout follows all the necessary constraints
 * A big can only checkout their associated little
 * A big can only checkin when they aren''t already checked in
 * A big can only checkout when they''re checked in';
 
 
--- Trigger: ensure_checkin_checkout_sanity
-
-DROP TRIGGER ensure_checkin_checkout_sanity ON public.checkins;
-
-CREATE OR REPLACE TRIGGER ensure_checkin_checkout_sanity
+CREATE TRIGGER ensure_checkin_checkout_sanity
     BEFORE INSERT
-    ON public.checkins
+    ON checkins
     FOR EACH ROW
     EXECUTE PROCEDURE check_checkin_checkout();
 
-GRANT EXECUTE ON FUNCTION public.check_checkin_checkout() TO bbbs;
+GRANT EXECUTE ON FUNCTION check_checkin_checkout() TO bbbs;
 
-GRANT ALL ON SEQUENCE public.big_littles_id_seq TO bbbs;
+GRANT ALL ON SEQUENCE checkins_id_seq TO bbbs;
 
-GRANT ALL ON SEQUENCE public.checkins_id_seq TO bbbs;
+GRANT ALL ON SEQUENCE password_resets_id_seq TO bbbs;
 
-GRANT ALL ON SEQUENCE public.little_id_seq TO bbbs;
+GRANT ALL ON SEQUENCE points_id_seq TO bbbs;
 
-GRANT ALL ON SEQUENCE public.password_resets_id_seq TO bbbs;
+GRANT ALL ON SEQUENCE users_id_seq TO bbbs;
 
-GRANT ALL ON SEQUENCE public.points_id_seq TO bbbs;
+GRANT ALL ON TABLE checkins TO bbbs;
 
-GRANT ALL ON SEQUENCE public.users_id_seq TO bbbs;
+GRANT ALL ON TABLE password_resets TO bbbs;
 
-GRANT ALL ON TABLE public.big_littles TO bbbs;
+GRANT ALL ON TABLE points TO bbbs;
 
-GRANT ALL ON TABLE public.checkins TO bbbs;
-
-GRANT ALL ON TABLE public.little TO bbbs;
-
-GRANT ALL ON TABLE public.password_resets TO bbbs;
-
-GRANT ALL ON TABLE public.points TO bbbs;
-
-GRANT ALL ON TABLE public.users TO bbbs;
+GRANT ALL ON TABLE users TO bbbs;
