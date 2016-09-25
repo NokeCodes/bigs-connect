@@ -1,0 +1,62 @@
+body {
+  background-color: rgb(115, 115, 115);
+  font: 400 1em/1.38 Helvetica;
+  color: rgb(0, 0, 0);
+}
+
+html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+#map {
+        height: 60%;
+		width: 60%;
+		margin: 0 auto 0 auto; 
+     }
+._button {
+  display: block;
+  width: 7.5833333333%;
+  height: 27px;
+  margin: 17px auto 0;
+  border-radius: 3px;
+  background-color: rgb(255, 255, 255);
+  font-size: 1em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+.name {
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 1em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+
+.location {
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 1em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+  width: 500px;
+}
+
+select, input{
+	display: block;
+  width: 7.5833333333%;
+  height: 27px;
+  margin: 17px auto 0;
+  border-radius: 3px;
+  background-color: rgb(255, 255, 255);
+  font-size: 1em;
+  text-align: center;
+  color: rgb(0, 0, 0);
+  
+}
+
+option{
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+

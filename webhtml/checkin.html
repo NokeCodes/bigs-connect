@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0">
+  <title>checkin</title>
+  <link rel="stylesheet" href="css/standardize.css">
+  <link rel="stylesheet" href="css/checkin-grid.css">
+  <link rel="stylesheet" href="css/checkin.css">
+  <link rel="stylesheet" href="/maps/documentation/javascript/demos/demos.css">
+</head>
+<body class="body page-checkin clearfix">
+<input id="name" class="name" name="name" placeholder="Name" type="text">
+<select>
+	<option value="Check In">Check In</option>
+	<option value="Check out">Check Out</option>
+</select>
+
+<button id="login" class="_button" type="submit">Submit</button>
+	<br/>
+    <input id="location" class="location" name="location" placeholder="Enter your Location if the map does not display" type="text">
+	<br/>
+	<div id="map"></div>
+    <script>
+      function initMap() {
+	  var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 37.2710, lng: -79.9414},
+          zoom: 12
+        });
+        var infoWindow = new google.maps.InfoWindow({map: map});
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLShqLb8kOJ6CXDHnGSc2VEA0pgjado2A&callback=initMap"
+    async defer></script>
+	
+
+  </body>
+</html>
