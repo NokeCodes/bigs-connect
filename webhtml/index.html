@@ -10,9 +10,11 @@
 </head>
 <body class="body page-index clearfix">
   <p id="header" class="text text-1 js-p1"><span>Big Brothers Big Sisters</span></p>
+  <form name="myForm" action="demo_form.asp" onsubmit="return validateForm()" method="post">
   <input id="emails" class="_input _input-1 js-emails" name="email" placeholder="Enter your email:" type="email">
   <input id="passwd" class="_input _input-2 js-passwd" name="Password" placeholder="Enter your password:" type="password">
   <button id="login" class="_button" type="submit">Login</button>
+  </form>
   <p class="text text-2"><span>South Western Virginia Chapter</span></p>
 </body>
 </html>
